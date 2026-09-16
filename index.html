@@ -3,363 +3,616 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MBTI 职场性格测评</title>
+<title>MBTI 性格测评</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236C5CE7'/%3E%3Ctext x='32' y='42' font-size='28' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial'%3EM%3C/text%3E%3C/svg%3E">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --primary:#6C5CE7;--primary-light:#A29BFE;--secondary:#00CEC9;
-  --bg:#F8F9FF;--card:#fff;--text:#2D3436;--text-light:#636E72;
-  --accent:#FFEAA7;--danger:#FF7675;--border:#E8EAF6;--success:#55EFC4;
-}
-body{font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent}
-.app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding:24px 20px}
-.screen{display:none;flex-direction:column;min-height:calc(100vh - 48px);animation:fadein .25s ease}
-.screen.active{display:flex}
-@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  :root {
+    --primary: #6C5CE7;
+    --primary-light: #DCD9FB;
+    --bg: #F5F6FA;
+    --card: #FFFFFF;
+    --text: #2D3436;
+    --text-light: #8A8F9C;
+    --border: #E6E8F0;
+    --danger: #E74C3C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 16px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  footer {
+    text-align: center;
+    padding: 14px 16px 18px;
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
 
-/* Cover */
-#cover{justify-content:center;align-items:center;text-align:center;gap:18px}
-.cover-icon{font-size:56px;animation:bounce 2s ease infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.cover-title{font-size:26px;font-weight:800;color:var(--primary);letter-spacing:1px}
-.cover-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.cover-tag{background:var(--accent);color:#856404;font-size:12px;padding:4px 14px;border-radius:20px;font-weight:600}
-.cover-sub{font-size:14px;color:var(--text-light);line-height:1.7;max-width:320px}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;padding:14px 48px;border-radius:30px;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(108,92,231,.3);transition:transform .15s}
-.btn-primary:active{transform:scale(.95)}
-.btn-secondary{background:var(--card);color:var(--primary);border:1.5px solid var(--primary);padding:10px 32px;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer}
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 32px 24px;
+    box-shadow: 0 4px 24px rgba(45, 52, 54, 0.06);
+  }
 
-/* Quiz */
-#quiz{justify-content:flex-start;gap:14px}
-.quiz-top{display:flex;justify-content:space-between;align-items:center}
-.quiz-back-btn{background:none;border:none;font-size:18px;color:var(--text-light);cursor:pointer;padding:4px 10px;display:flex;align-items:center;gap:4px}
-.quiz-progress-text{font-size:13px;color:var(--text-light);font-weight:600}
-.progress-bar{width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:3px;transition:width .3s ease}
-.quiz-dim{font-size:12px;color:var(--secondary);font-weight:700;letter-spacing:1px;margin-top:6px}
-.quiz-question{font-size:19px;font-weight:700;line-height:1.5;color:var(--text);margin-top:4px}
-.quiz-options{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-.quiz-option{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px 18px;font-size:15px;line-height:1.5;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:10px}
-.quiz-option:active{transform:scale(.97)}
-.quiz-option.selected{border-color:var(--primary);background:#F3F0FF}
-.quiz-option.selected .opt-letter{background:var(--primary);color:#fff}
-.opt-letter{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--text-light);font-weight:700;font-size:13px;flex-shrink:0;margin-top:1px}
-.quiz-nav{display:flex;gap:10px;margin-top:auto;padding-top:20px}
-.btn-prev{background:var(--card);color:var(--text-light);border:1.5px solid var(--border);padding:12px 24px;border-radius:25px;font-size:15px;font-weight:600;cursor:pointer;flex:1}
-.btn-next{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;padding:12px 24px;border-radius:25px;font-size:15px;font-weight:700;cursor:pointer;flex:2;transition:transform .15s}
-.btn-next:active{transform:scale(.97)}
-.btn-next:disabled{opacity:.4;cursor:not-allowed}
+  /* ===== 封面 ===== */
+  .cover { text-align: center; margin-top: 6vh; }
+  .cover .logo {
+    width: 72px; height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+    color: #fff;
+    font-size: 26px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    letter-spacing: 1px;
+  }
+  .cover h1 { font-size: 27px; font-weight: 700; letter-spacing: 1px; }
+  .cover .sub { margin-top: 10px; color: var(--text-light); font-size: 14px; line-height: 1.8; }
+  .cover .tags { display: flex; justify-content: center; gap: 8px; margin: 22px 0 30px; flex-wrap: wrap; }
+  .cover .tag {
+    font-size: 12px; color: var(--primary);
+    background: var(--primary-light);
+    padding: 5px 12px; border-radius: 999px;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 12px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+    font-family: inherit;
+  }
+  .btn:hover { opacity: .9; }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .link-btn {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 13px 0;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+    font-family: inherit;
+  }
+  .link-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .link-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
 
-/* Result */
-#result{justify-content:flex-start;gap:14px}
-.result-card{background:var(--card);border-radius:20px;padding:28px 22px;text-align:center;box-shadow:0 8px 30px rgba(108,92,231,.1);margin-top:12px}
-.result-emoji{font-size:52px;margin-bottom:6px}
-.result-type{font-size:34px;font-weight:800;color:var(--primary);letter-spacing:3px}
-.result-nick{font-size:17px;font-weight:700;color:var(--text);margin:6px 0}
-.result-divider{width:40px;height:3px;background:var(--accent);border-radius:2px;margin:10px auto}
-.result-desc{font-size:14px;color:var(--text-light);line-height:1.8;padding:0 6px}
-.letter-cards{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-.letter-card{background:var(--card);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;border:1px solid var(--border)}
-.letter-badge{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;font-size:20px;font-weight:800;color:#fff;flex-shrink:0}
-.letter-info{flex:1}
-.letter-word{font-size:14px;font-weight:700;color:var(--text)}
-.letter-trait{font-size:12px;color:var(--text-light);margin-top:2px;line-height:1.5}
-.dim-section{margin-top:16px}
-.dim-title{font-size:13px;color:var(--text-light);font-weight:700;margin-bottom:8px}
-.dim-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.dim-label-left{font-size:12px;font-weight:700;width:60px;text-align:right;flex-shrink:0}
-.dim-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
-.dim-bar-inner{height:100%;border-radius:4px;transition:width .6s ease}
-.dim-label-right{font-size:12px;font-weight:700;width:60px;flex-shrink:0}
-.disclaimer{background:#FEF9E7;border:1px solid #F9E79F;border-radius:10px;padding:12px 14px;margin-top:16px;font-size:12px;color:#7D6608;line-height:1.6;text-align:center}
-.result-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px;padding-bottom:8px}
-.btn-retake{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;padding:14px;border-radius:28px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s}
-.btn-retake:active{transform:scale(.97)}
+  /* ===== 答题 ===== */
+  .progress-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px; color: var(--text-light);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 3px;
+    background: var(--border);
+    overflow: hidden;
+    margin-bottom: 26px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 3px;
+    transition: width .25s ease;
+  }
+  .question { font-size: 20px; font-weight: 600; line-height: 1.65; margin-bottom: 26px; min-height: 66px; }
+  .options { display: flex; flex-direction: column; gap: 14px; }
+  .option {
+    padding: 18px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: #FBFBFE;
+    font-size: 15.5px;
+    line-height: 1.6;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+    font-family: inherit;
+    color: var(--text);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .option .radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid #C3C7D4;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: border-color .15s, box-shadow .15s;
+    position: relative;
+  }
+  .option .radio::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    transform: scale(0);
+    transition: transform .15s;
+  }
+  .option:hover { border-color: var(--primary); }
+  .option:hover .radio { border-color: var(--primary); }
+  .option.picked {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .option.picked .radio { border-color: #fff; }
+  .option.picked .radio::after { transform: scale(1); background: #fff; }
+
+  .nav-row { display: flex; gap: 12px; margin-top: 26px; }
+  .nav-btn {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+  .nav-prev {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+  }
+  .nav-prev:hover { border-color: var(--primary); color: var(--primary); }
+  .nav-next {
+    background: var(--primary);
+    border: 1.5px solid var(--primary);
+    color: #fff;
+  }
+  .nav-next:hover { opacity: .9; }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .restart-link {
+    display: block;
+    margin: 18px auto 0;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: inherit;
+  }
+  .restart-link.confirming { color: var(--danger); font-weight: 600; }
+
+  /* ===== 结果 ===== */
+  .result { text-align: center; }
+  .result .label { font-size: 13px; color: var(--text-light); letter-spacing: 3px; }
+  .result .type {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 6px;
+    margin: 8px 0 4px;
+    animation: pop .45s ease;
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(.8); }
+    60% { transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .result .hint { font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
+
+  .letters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 24px;
+  }
+  .letter-card {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    background: #FBFBFE;
+  }
+  .letter-card .head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .letter-card .big {
+    font-size: 26px; font-weight: 800; color: var(--primary);
+  }
+  .letter-card .zh { font-size: 14px; font-weight: 600; }
+  .letter-card .en { font-size: 11px; color: var(--text-light); }
+  .letter-card .desc { font-size: 12.5px; color: var(--text-light); line-height: 1.65; }
+
+  .dims { display: flex; flex-direction: column; gap: 16px; text-align: left; margin-bottom: 22px; }
+  .dim-row { display: flex; align-items: center; gap: 10px; }
+  .dim-letter {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .dim-letter.on { background: var(--primary); color: #fff; }
+  .dim-letter.off { background: var(--border); color: var(--text-light); }
+  .dim-track {
+    flex: 1;
+    height: 12px;
+    border-radius: 6px;
+    background: var(--border);
+    overflow: hidden;
+    display: flex;
+  }
+  .dim-seg-a { background: var(--primary); transition: width .6s ease; }
+  .dim-seg-b { background: #C8CBE0; flex: 1; }
+  .dim-pct { width: 42px; text-align: right; font-size: 12.5px; color: var(--text-light); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+  .notice {
+    font-size: 12.5px;
+    color: #8A6D1A;
+    background: #FFF8E1;
+    border: 1px solid #F2E3AE;
+    border-radius: 10px;
+    padding: 12px 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .notice strong { font-weight: 700; }
+
+  /* ===== 历史 ===== */
+  .history h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .history .count { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+  .history-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+  .h-item {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #FBFBFE;
+  }
+  .h-item .row1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .h-item .h-type { font-size: 18px; font-weight: 800; color: var(--primary); letter-spacing: 2px; }
+  .h-item .h-time { font-size: 12px; color: var(--text-light); }
+  .h-item .h-dims { font-size: 12px; color: var(--text-light); line-height: 1.7; }
+  .empty {
+    text-align: center;
+    padding: 40px 0 30px;
+    color: var(--text-light);
+    font-size: 14px;
+  }
+  .empty .icon { font-size: 40px; margin-bottom: 10px; }
+
+  @media (max-width: 480px) {
+    .container { padding: 20px 14px 16px; }
+    .card { padding: 26px 18px; }
+    .question { font-size: 18px; }
+    .result .type { font-size: 46px; }
+    .letters { grid-template-columns: 1fr; gap: 10px; }
+    .letter-card { padding: 12px 12px 10px; display: flex; gap: 12px; align-items: center; }
+    .letter-card .head { margin-bottom: 0; flex-direction: column; gap: 0; align-items: flex-start; }
+    .letter-card .body { flex: 1; }
+    .letter-card .desc { margin-top: 4px; }
+  }
 </style>
 </head>
 <body>
-<div class="app">
-
-<!-- Cover -->
-<div class="screen active" id="cover">
-  <div class="cover-icon">🧩</div>
-  <div class="cover-title">MBTI 职场性格测评</div>
-  <div class="cover-tags">
-    <span class="cover-tag">20题</span>
-    <span class="cover-tag">约3分钟</span>
-    <span class="cover-tag">趣味版</span>
-  </div>
-  <div class="cover-sub">20 道趣味职场情景题，测出你的 MBTI 职场性格画像。<br>支持随时回看修改，结果可一目了然。</div>
-  <button class="btn-primary" onclick="startQuiz()">开始测评</button>
-</div>
-
-<!-- Quiz -->
-<div class="screen" id="quiz">
-  <div class="quiz-top">
-    <button class="quiz-back-btn" onclick="prevQuestion()">‹ 返回</button>
-    <span class="quiz-progress-text" id="progressText">1 / 20</span>
-    <span style="width:52px"></span>
-  </div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
-  <div class="quiz-dim" id="dimLabel">外向 / 内向</div>
-  <div class="quiz-question" id="questionText">加载中...</div>
-  <div class="quiz-options" id="optionsContainer"></div>
-  <div class="quiz-nav">
-    <button class="btn-prev" id="prevBtn" onclick="prevQuestion()">上一题</button>
-    <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>下一题</button>
-  </div>
-</div>
-
-<!-- Result -->
-<div class="screen" id="result">
-  <div class="result-card">
-    <div class="result-emoji" id="resultEmoji">🐶</div>
-    <div class="result-type" id="resultType">ENFP</div>
-    <div class="result-nick" id="resultNickname">快乐小狗</div>
-    <div class="result-divider"></div>
-    <div class="result-desc" id="resultDesc">描述加载中...</div>
-    <div class="letter-cards" id="letterCards"></div>
-    <div class="dim-section" id="dimSection"></div>
-    <div class="disclaimer">⚠️ 本测评仅供娱乐和自我了解，不构成心理诊断或专业建议。</div>
-  </div>
-  <div class="result-actions">
-    <button class="btn-retake" onclick="startQuiz()">重新测试</button>
-  </div>
-</div>
-
-</div>
+<div class="container" id="app"></div>
+<footer>MBTI 性格测评 · 本测评为趣味测试，仅供娱乐和自我了解，不构成心理诊断或专业建议。</footer>
 
 <script>
-// ========== Data ==========
-var dimNames = {
-  EI: '外向 E / 内向 I',
-  SN: '实感 S / 直觉 N',
-  TF: '思考 T / 情感 F',
-  JP: '判断 J / 知觉 P'
-};
+(function () {
+  'use strict';
 
-var questions = [
-  // E/I — 5题
-  {dim:'EI', text:'周末到了，你更想怎么过？', a:{text:'约朋友出去聚餐，热闹才开心', val:'E'}, b:{text:'宅家追剧独处，安静才舒服', val:'I'}},
-  {dim:'EI', text:'开会时你通常会？', a:{text:'主动发言，想到就说', val:'E'}, b:{text:'先听别人讲，想好再开口', val:'I'}},
-  {dim:'EI', text:'参加完一场大型活动，你觉得？', a:{text:'意犹未尽，充满能量', val:'E'}, b:{text:'终于结束了，需要独处充电', val:'I'}},
-  {dim:'EI', text:'到了新公司，你倾向于？', a:{text:'尽快认识所有同事', val:'E'}, b:{text:'先和旁边的人混熟就好', val:'I'}},
-  {dim:'EI', text:'遇到烦心事，你更倾向于？', a:{text:'找朋友倾诉聊聊就好了', val:'E'}, b:{text:'自己安静消化，不想说', val:'I'}},
-  // S/N — 5题
-  {dim:'SN', text:'你更愿意相信？', a:{text:'数据和事实，眼见为实', val:'S'}, b:{text:'直觉和灵感，第六感很准', val:'N'}},
-  {dim:'SN', text:'接到新项目你先想？', a:{text:'具体怎么落地，一步步拆解', val:'S'}, b:{text:'未来能做成什么样，大胆想象', val:'N'}},
-  {dim:'SN', text:'你更喜欢哪种工作？', a:{text:'有明确流程和标准答案的', val:'S'}, b:{text:'可以自由发挥、没有标准答案的', val:'N'}},
-  {dim:'SN', text:'向同事介绍一本书你会说？', a:{text:'书里讲了什么具体内容', val:'S'}, b:{text:'这本书给人什么启发', val:'N'}},
-  {dim:'SN', text:'做计划时你更关注？', a:{text:'细节是否到位，有没有遗漏', val:'S'}, b:{text:'大方向对不对，整体走向如何', val:'N'}},
-  // T/F — 5题
-  {dim:'TF', text:'同事犯了错，你会？', a:{text:'直接指出问题，对事不对人', val:'T'}, b:{text:'先考虑他的感受，委婉提醒', val:'F'}},
-  {dim:'TF', text:'做决定时你更看重？', a:{text:'逻辑和效率，客观分析', val:'T'}, b:{text:'人情和和谐，大家的感受', val:'F'}},
-  {dim:'TF', text:'朋友找你诉苦你会？', a:{text:'帮他分析问题，给解决方案', val:'T'}, b:{text:'先安慰情绪，陪他骂就对了', val:'F'}},
-  {dim:'TF', text:'评价一件事你习惯用？', a:{text:'客观标准，对就是对错就是错', val:'T'}, b:{text:'价值观和感受，站在对方角度想', val:'F'}},
-  {dim:'TF', text:'团队产生分歧时你倾向于？', a:{text:'用数据和逻辑说服大家', val:'T'}, b:{text:'协调各方需求找共识', val:'F'}},
-  // J/P — 5题
-  {dim:'JP', text:'面对新任务你倾向于？', a:{text:'提前列好计划，按部就班', val:'J'}, b:{text:'灵活应对，走到哪算哪', val:'P'}},
-  {dim:'JP', text:'你的工位桌面通常是？', a:{text:'整整齐齐，物归原位', val:'J'}, b:{text:'看起来乱但我知道东西在哪', val:'P'}},
-  {dim:'JP', text:'出差旅行你会？', a:{text:'提前做好攻略和行程表', val:'J'}, b:{text:'到了再说，随机应变', val:'P'}},
-  {dim:'JP', text:'对于截止日期你？', a:{text:'提前完成才安心', val:'J'}, b:{text:'最后一刻才有灵感爆发', val:'P'}},
-  {dim:'JP', text:'你更喜欢怎样的工作节奏？', a:{text:'有明确节点和里程碑的', val:'J'}, b:{text:'灵活自由、随时调整的', val:'P'}},
-];
+  /* ===== 题库：四维度各 5 题，交错排列；s: 0 = 第一字母(E/S/T/J)，1 = 第二字母(I/N/F/P) ===== */
+  var QUESTIONS = [
+    { dim: 'EI', q: '周五晚上的聚会结束了，你更像是哪种状态？',
+      opts: [ { t: '精神倍儿棒，还想去下一场', s: 0 }, { t: '终于能回家了，独处让我满血复活', s: 1 } ] },
+    { dim: 'SN', q: '学习一样新东西，你更喜欢从哪儿开始？',
+      opts: [ { t: '从具体步骤和实例一步步来', s: 0 }, { t: '先弄懂整体概念和大框架', s: 1 } ] },
+    { dim: 'TF', q: '朋友向你吐槽工作上的糟心事，你的第一反应是？',
+      opts: [ { t: '先共情安慰：这也太惨了吧', s: 1 }, { t: '直接帮他分析问题出在哪', s: 0 } ] },
+    { dim: 'JP', q: '出门旅行之前，你通常会？',
+      opts: [ { t: '提前做好攻略、订好行程', s: 0 }, { t: '走到哪玩到哪，随遇而安', s: 1 } ] },
+    { dim: 'EI', q: '在一个陌生人很多的场合，你通常？',
+      opts: [ { t: '主动搭话，很快就能聊起来', s: 0 }, { t: '等别人先开口，或者安静待着', s: 1 } ] },
+    { dim: 'SN', q: '听朋友讲一件事，你更容易注意到？',
+      opts: [ { t: '具体细节：谁、在哪、说了什么', s: 0 }, { t: '言外之意和整体的感觉', s: 1 } ] },
+    { dim: 'TF', q: '做重要决定时，你更看重？',
+      opts: [ { t: '逻辑和利弊是否站得住脚', s: 0 }, { t: '自己和相关的人的感受', s: 1 } ] },
+    { dim: 'JP', q: '你的待办事项一般放在哪？',
+      opts: [ { t: '装在脑子里，大概齐就行', s: 1 }, { t: '写在清单里，做完打勾才踏实', s: 0 } ] },
+    { dim: 'EI', q: '遇到烦心事，你更愿意？',
+      opts: [ { t: '自己待着，慢慢消化', s: 1 }, { t: '找人聊一聊，说着说着就通了', s: 0 } ] },
+    { dim: 'SN', q: '下面哪种描述更符合你？',
+      opts: [ { t: '更相信亲身经验和眼见为实', s: 0 }, { t: '常常凭灵感和直觉做判断', s: 1 } ] },
+    { dim: 'TF', q: '看别人争论时，你更容易被哪一方说服？',
+      opts: [ { t: '论证严密、逻辑扎实的', s: 0 }, { t: '真诚动人、有情感力量的', s: 1 } ] },
+    { dim: 'JP', q: '面对截止日期，你倾向于？',
+      opts: [ { t: '尽早搞定，落袋为安', s: 0 }, { t: 'deadline 前灵感才爆发', s: 1 } ] },
+    { dim: 'EI', q: '团队讨论的时候，你常常？',
+      opts: [ { t: '想到就说，边说边理清思路', s: 0 }, { t: '先在心里想清楚再开口', s: 1 } ] },
+    { dim: 'SN', q: '想象你的理想假期，更接近？',
+      opts: [ { t: '行程清楚、安排妥当，心里有底', s: 0 }, { t: '不设限，跟着心情走', s: 1 } ] },
+    { dim: 'TF', q: '如果被人评价"太较真"或"太感性"，你更可能？',
+      opts: [ { t: '较真？我只是就事论事', s: 0 }, { t: '你不懂，我是真的在意', s: 1 } ] },
+    { dim: 'JP', q: '原定计划突然被打乱，你的第一感受是？',
+      opts: [ { t: '无所谓，随机应变也挺好', s: 1 }, { t: '有点烦躁，想尽快恢复秩序', s: 0 } ] },
+    { dim: 'EI', q: '难得的空闲周末，你更愿意？',
+      opts: [ { t: '在家安静独处，做自己的事', s: 1 }, { t: '约上朋友出去玩，越热闹越好', s: 0 } ] },
+    { dim: 'SN', q: '读小说或看电影时，你更偏爱？',
+      opts: [ { t: '天马行空的想象和隐喻', s: 1 }, { t: '贴近现实、细节扎实的情节', s: 0 } ] },
+    { dim: 'TF', q: '给遇到困难的朋友提建议时，你通常会？',
+      opts: [ { t: '先顾及对方心情，再找时机开口', s: 1 }, { t: '直接给出分析和解决方案', s: 0 } ] },
+    { dim: 'JP', q: '你的桌面和房间通常是？',
+      opts: [ { t: '乱中有序，东西自己能找到', s: 1 }, { t: '分类摆放、整整齐齐才舒服', s: 0 } ] }
+  ];
 
-var dimColors = {
-  E:'#E74C3C', I:'#3498DB',
-  S:'#F39C12', N:'#9B59B6',
-  T:'#2C3E50', F:'#E91E63',
-  J:'#16A085', P:'#F1C40F'
-};
+  /* 每题第一字母选项的下标（用于校验与测试） */
+  var DIMS = {
+    EI: { a: 'E', b: 'I' },
+    SN: { a: 'S', b: 'N' },
+    TF: { a: 'T', b: 'F' },
+    JP: { a: 'J', b: 'P' }
+  };
+  var DIM_ORDER = ['EI', 'SN', 'TF', 'JP'];
+  var PER_DIM = 5;
 
-var dimPairs = {
-  EI:{left:'E',right:'I',leftLabel:'外向',rightLabel:'内向',leftColor:'#E74C3C',rightColor:'#3498DB'},
-  SN:{left:'S',right:'N',leftLabel:'实感',rightLabel:'直觉',leftColor:'#F39C12',rightColor:'#9B59B6'},
-  TF:{left:'T',right:'F',leftLabel:'思考',rightLabel:'情感',leftColor:'#2C3E50',rightColor:'#E91E63'},
-  JP:{left:'J',right:'P',leftLabel:'判断',rightLabel:'知觉',leftColor:'#16A085',rightColor:'#F1C40F'}
-};
+  var LETTER_INFO = {
+    E: { zh: '外向', en: 'Extraversion', desc: '能量来自外部世界，在热闹与交往中充电，喜欢边聊边想。' },
+    I: { zh: '内向', en: 'Introversion', desc: '能量来自内心世界，独处时充电，喜欢深度的思考和交流。' },
+    S: { zh: '实感', en: 'Sensing', desc: '关注具体事实与细节，相信经验和眼见为实，脚踏实地。' },
+    N: { zh: '直觉', en: 'iNtuition', desc: '关注可能性与整体图景，喜欢想象和创新，常有灵光一闪。' },
+    T: { zh: '思考', en: 'Thinking', desc: '做决定时以逻辑和利弊为依据，重视客观与公平。' },
+    F: { zh: '情感', en: 'Feeling', desc: '做决定时以感受和价值观为依据，重视人际和谐与共情。' },
+    J: { zh: '判断', en: 'Judging', desc: '喜欢计划与秩序，事情早早定下来才安心。' },
+    P: { zh: '知觉', en: 'Perceiving', desc: '喜欢灵活与开放，留点余地随缘，享受即兴的变化。' }
+  };
 
-var typeData = {
-  INTJ:{emoji:'🦉', nick:'冷面战略家', desc:'别人看到的是你的高冷，其实你的大脑里正在运行三步以后的棋局。社交？能免则免。计划？必须有。'},
-  INTP:{emoji:'🤖', nick:'佛系逻辑怪', desc:'你的大脑永远在思考宇宙终极问题，但桌面上的文件永远找不到。对事不对人，逻辑大于一切。'},
-  ENTJ:{emoji:'🦁', nick:'霸道总裁', desc:'效率是你的信仰，拖延是你的敌人。你不发火不是脾气好，只是还没到发火的时候。'},
-  ENTP:{emoji:'🦊', nick:'辩论赛冠军', desc:'你最喜欢说的话是"但是如果换个角度看..."。点子多到爆炸，执行力嘛...下一个点子！'},
-  INFJ:{emoji:'🦌', nick:'温柔预言家', desc:'你能看透每个人的心思，但没人能看透你。表面云淡风轻，内心已经演完一部连续剧。'},
-  INFP:{emoji:'🕊', nick:'理想主义诗人', desc:'你对世界充满爱，但也会因为外卖少放了一包酱而陷入存在主义危机。温柔但固执。'},
-  ENFJ:{emoji:'☀️', nick:'温暖太阳', desc:'你记得每个人的生日、喜好和心事，是天生的团建委员。但请也关心一下自己好吗？'},
-  ENFP:{emoji:'🐶', nick:'快乐小狗', desc:'你的热情可以融化北极冰川，你的灵感多到连自己都追不上。但DDL是你永远的宿敌。'},
-  ISTJ:{emoji:'⚓', nick:'定海神针', desc:'你坚信规则就是规则，Excel表格是你的舒适区。靠谱是你的代名词，惊喜不是你的菜。'},
-  ISFJ:{emoji:'🛡', nick:'隐形守护者', desc:'你默默记住每个人的咖啡口味，从不邀功但每次都救场。你的座右铭：做好本职工作。'},
-  ESTJ:{emoji:'📋', nick:'铁血管理者', desc:'开会你第一个到，任务你第一个交。效率和秩序是你的信仰，摸鱼的人请自重。'},
-  ESFJ:{emoji:'🫖', nick:'热心肠大姐', desc:'你总是第一个问"大家午饭吃什么"，团建你组织，年货你采购。有你在就有温度。'},
-  ISTP:{emoji:'🔧', nick:'冷面修理工', desc:'话不多但手很巧，什么东西坏了到你手里都能修。表情管理满分，情绪波动为零。'},
-  ISFP:{emoji:'🎨', nick:'低调艺术家', desc:'你有自己的审美和节奏，不喜欢被催。给你一个安静的角落和一副耳机，世界就美好了。'},
-  ESTP:{emoji:'⚡', nick:'行动派', desc:'先做了再说！你是天生的危机处理专家，越是混乱的局面你越兴奋。计划？那是什么？'},
-  ESFP:{emoji:'🎉', nick:'派对制造机', desc:'你的笑声可以穿透三堵墙，有你的地方就有快乐。工作可以无聊但你不行，生活就要有滋有味。'}
-};
+  var STORE_KEY = 'mbtiHistory20';
+  var HISTORY_LIMIT = 20;
 
-var letterMeanings = {
-  E:{word:'Extraversion 外向', trait:'能量来自外部世界，喜欢社交互动，先行动后思考'},
-  I:{word:'Introversion 内向', trait:'能量来自内心世界，偏好独处充电，先思考后行动'},
-  S:{word:'Sensing 实感', trait:'关注具体事实和细节，依赖五官感知，重视经验'},
-  N:{word:'Intuition 直觉', trait:'关注可能性和大局，依赖灵感联想，重视创新'},
-  T:{word:'Thinking 思考', trait:'决策基于逻辑和客观分析，注重公平和效率'},
-  F:{word:'Feeling 情感', trait:'决策基于价值观和他人感受，注重和谐与共情'},
-  J:{word:'Judging 判断', trait:'偏好有计划有结构的生活，喜欢提前安排和定论'},
-  P:{word:'Perceiving 知觉', trait:'偏好灵活开放的生活，喜欢随机应变和探索'}
-};
+  var app = document.getElementById('app');
+  var state = 'cover';       // cover | quiz | result | history
+  var idx = 0;
+  var answers = null;        // Array(20)：null | 0 | 1（选项下标）
+  var lastResult = null;     // {type, EI, SN, TF, JP}
+  var confirmClear = false;  // 历史页清空确认
+  var confirmRestart = false;// 答题页重测确认
 
-// ========== State ==========
-var currentIdx = 0;
-var answers = []; // 'A' or 'B' per question, null if unanswered
-
-// ========== Navigation ==========
-function showScreen(id) {
-  var screens = document.querySelectorAll('.screen');
-  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function startQuiz() {
-  currentIdx = 0;
-  answers = new Array(20).fill(null);
-  renderQuestion();
-  showScreen('quiz');
-}
-
-// ========== Quiz ==========
-function renderQuestion() {
-  var q = questions[currentIdx];
-  var answered = answers.filter(function(a){return a!==null;}).length;
-
-  document.getElementById('progressText').textContent = (currentIdx + 1) + ' / 20';
-  document.getElementById('progressFill').style.width = ((currentIdx + 1) / 20 * 100) + '%';
-  document.getElementById('dimLabel').textContent = dimNames[q.dim];
-  document.getElementById('questionText').textContent = q.text;
-
-  // Render options
-  var container = document.getElementById('optionsContainer');
-  container.innerHTML = '';
-  var sel = answers[currentIdx];
-
-  var optA = document.createElement('div');
-  optA.className = 'quiz-option' + (sel === 'A' ? ' selected' : '');
-  optA.innerHTML = '<span class="opt-letter">A</span><span>' + q.a.text + '</span>';
-  optA.onclick = function() { selectOption('A'); };
-  container.appendChild(optA);
-
-  var optB = document.createElement('div');
-  optB.className = 'quiz-option' + (sel === 'B' ? ' selected' : '');
-  optB.innerHTML = '<span class="opt-letter">B</span><span>' + q.b.text + '</span>';
-  optB.onclick = function() { selectOption('B'); };
-  container.appendChild(optB);
-
-  // Button states
-  document.getElementById('prevBtn').disabled = (currentIdx === 0);
-  document.getElementById('prevBtn').style.opacity = currentIdx === 0 ? '0.4' : '1';
-
-  var nextBtn = document.getElementById('nextBtn');
-  nextBtn.disabled = (answers[currentIdx] === null);
-  if (currentIdx === 19) {
-    nextBtn.textContent = '查看结果';
-  } else {
-    nextBtn.textContent = '下一题';
-  }
-}
-
-function selectOption(choice) {
-  answers[currentIdx] = choice;
-  // Update visual
-  var opts = document.getElementById('optionsContainer').children;
-  opts[0].className = 'quiz-option' + (choice === 'A' ? ' selected' : '');
-  opts[1].className = 'quiz-option' + (choice === 'B' ? ' selected' : '');
-  // Enable next button
-  document.getElementById('nextBtn').disabled = false;
-}
-
-function nextQuestion() {
-  if (answers[currentIdx] === null) return;
-  if (currentIdx < 19) {
-    currentIdx++;
-    renderQuestion();
-  } else {
-    finishQuiz();
-  }
-}
-
-function prevQuestion() {
-  if (currentIdx > 0) {
-    currentIdx--;
-    renderQuestion();
-  } else {
-    showScreen('cover');
-  }
-}
-
-function finishQuiz() {
-  // Score
-  var scores = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
-  for (var i = 0; i < 20; i++) {
-    if (!answers[i]) continue;
-    var q = questions[i];
-    var val = (answers[i] === 'A') ? q.a.val : q.b.val;
-    scores[val]++;
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  var type = '';
-  type += (scores.E >= scores.I) ? 'E' : 'I';
-  type += (scores.S >= scores.N) ? 'S' : 'N';
-  type += (scores.T >= scores.F) ? 'T' : 'F';
-  type += (scores.J >= scores.P) ? 'J' : 'P';
-
-  var td = typeData[type];
-
-  // Result card
-  document.getElementById('resultEmoji').textContent = td.emoji;
-  document.getElementById('resultType').textContent = type;
-  document.getElementById('resultNickname').textContent = td.nick;
-  document.getElementById('resultDesc').textContent = td.desc;
-
-  // Letter cards
-  var letters = type.split('');
-  var letterHtml = '';
-  for (var li = 0; li < letters.length; li++) {
-    var L = letters[li];
-    var lm = letterMeanings[L];
-    letterHtml += '<div class="letter-card">' +
-      '<div class="letter-badge" style="background:' + dimColors[L] + '">' + L + '</div>' +
-      '<div class="letter-info">' +
-        '<div class="letter-word">' + lm.word + '</div>' +
-        '<div class="letter-trait">' + lm.trait + '</div>' +
-      '</div>' +
-    '</div>';
+  /* ===== 历史存取 ===== */
+  function loadHistory() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
   }
-  document.getElementById('letterCards').innerHTML = letterHtml;
+  function saveHistory(arr) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
 
-  // Dimension bars
-  var dimHtml = '<div class="dim-title">四维度倾向</div>';
-  ['EI','SN','TF','JP'].forEach(function(d) {
-    var p = dimPairs[d];
-    var lv = scores[p.left] || 0;
-    var rv = scores[p.right] || 0;
-    var total = lv + rv;
-    var leftPct = total > 0 ? (lv / total * 100) : 50;
-    dimHtml += '<div class="dim-bar-row">' +
-      '<div class="dim-label-left" style="color:' + p.leftColor + '">' + p.left + ' ' + p.leftLabel + ' ' + lv + '</div>' +
-      '<div class="dim-bar-wrap"><div class="dim-bar-inner" style="width:' + leftPct + '%;background:' + p.leftColor + '"></div></div>' +
-      '<div class="dim-label-right" style="color:' + p.rightColor + '">' + rv + ' ' + p.right + ' ' + p.rightLabel + '</div>' +
-    '</div>';
-  });
-  document.getElementById('dimSection').innerHTML = dimHtml;
+  /* ===== 渲染 ===== */
+  function render() {
+    if (state === 'cover') renderCover();
+    else if (state === 'quiz') renderQuiz();
+    else if (state === 'result') renderResult();
+    else if (state === 'history') renderHistory();
+  }
 
-  showScreen('result');
-}
+  function renderCover() {
+    var hasHistory = loadHistory().length > 0;
+    app.innerHTML =
+      '<div class="card cover">' +
+        '<div class="logo">MBTI</div>' +
+        '<h1>MBTI 性格测评</h1>' +
+        '<p class="sub">20 道生活化单选题，覆盖四个性格维度<br>测出你的四字母人格类型</p>' +
+        '<div class="tags">' +
+          '<span class="tag">20 题</span>' +
+          '<span class="tag">约 3 分钟</span>' +
+          '<span class="tag">免注册</span>' +
+          '<span class="tag">数据仅存本地</span>' +
+        '</div>' +
+        '<button class="btn" id="btn-start">开始测试</button>' +
+        (hasHistory ? '<button class="link-btn" id="btn-history">查看历史记录</button>' : '') +
+      '</div>';
+    document.getElementById('btn-start').onclick = startQuiz;
+    var h = document.getElementById('btn-history');
+    if (h) h.onclick = function () { state = 'history'; confirmClear = false; render(); };
+    window.scrollTo(0, 0);
+  }
 
-// Init
-window.addEventListener('DOMContentLoaded', function() {
-  renderQuestion();
-});
+  function startQuiz() {
+    state = 'quiz';
+    idx = 0;
+    answers = new Array(QUESTIONS.length).fill(null);
+    lastResult = null;
+    confirmRestart = false;
+    render();
+  }
+
+  function renderQuiz() {
+    var q = QUESTIONS[idx];
+    var answered = answers.filter(function (a) { return a !== null; }).length;
+    var pct = Math.round(answered / QUESTIONS.length * 100);
+    var isLast = idx === QUESTIONS.length - 1;
+    var curAnswered = answers[idx] !== null;
+    var restartHtml = confirmRestart
+      ? '<button class="restart-link confirming" id="btn-restart-yes">再点一次确认重新测试</button>'
+      : '<button class="restart-link" id="btn-restart">重新测试</button>';
+    app.innerHTML =
+      '<div class="card">' +
+        '<div class="progress-row"><span>第 ' + (idx + 1) + ' / ' + QUESTIONS.length + ' 题</span><span>已答 ' + answered + ' 题 · ' + pct + '%</span></div>' +
+        '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="question">' + esc(q.q) + '</div>' +
+        '<div class="options">' +
+          q.opts.map(function (o, i) {
+            return '<button class="option' + (answers[idx] === i ? ' picked' : '') + '" data-i="' + i + '" aria-pressed="' + (answers[idx] === i) + '">' +
+              '<span class="radio"></span><span>' + esc(o.t) + '</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        '<div class="nav-row">' +
+          '<button class="nav-btn nav-prev" id="btn-prev"' + (idx === 0 ? ' disabled' : '') + '>上一题</button>' +
+          '<button class="nav-btn nav-next" id="btn-next"' + (curAnswered ? '' : ' disabled') + '>' + (isLast ? '查看结果' : '下一题') + '</button>' +
+        '</div>' +
+        restartHtml +
+      '</div>';
+    var btns = app.querySelectorAll('.option');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].onclick = (function (bi) { return function () { pick(bi); }; })(i);
+    }
+    document.getElementById('btn-prev').onclick = function () {
+      if (idx > 0) { idx--; confirmRestart = false; render(); }
+    };
+    document.getElementById('btn-next').onclick = function () {
+      if (answers[idx] === null) return;   // 未答不允许前进
+      if (idx === QUESTIONS.length - 1) { finish(); }
+      else { idx++; confirmRestart = false; render(); }
+    };
+    var r = document.getElementById('btn-restart');
+    if (r) r.onclick = function () { confirmRestart = true; render(); };
+    var ry = document.getElementById('btn-restart-yes');
+    if (ry) ry.onclick = function () { startQuiz(); };
+  }
+
+  function pick(bi) {
+    if (state !== 'quiz') return;
+    answers[idx] = bi;
+    render();   // 重渲染：更新选中态与"下一题"可用性
+  }
+
+  function finish() {
+    var type = '', dims = {};
+    for (var i = 0; i < DIM_ORDER.length; i++) {
+      var d = DIM_ORDER[i], meta = DIMS[d];
+      var v = 0;
+      for (var j = 0; j < QUESTIONS.length; j++) {
+        if (QUESTIONS[j].dim === d && QUESTIONS[j].opts[answers[j]].s === 0) v++;
+      }
+      var pctA = Math.round(v / PER_DIM * 100);
+      type += v >= 3 ? meta.a : meta.b;   // 5 题中至少 3 票才算第一字母
+      dims[d] = pctA;
+    }
+    lastResult = { type: type, EI: dims.EI, SN: dims.SN, TF: dims.TF, JP: dims.JP };
+    var arr = loadHistory();
+    arr.unshift({ ts: Date.now(), type: type, EI: dims.EI, SN: dims.SN, TF: dims.TF, JP: dims.JP });
+    if (arr.length > HISTORY_LIMIT) arr = arr.slice(0, HISTORY_LIMIT);
+    saveHistory(arr);
+    state = 'result';
+    render();
+  }
+
+  function renderResult() {
+    var r = lastResult;
+    var rows = DIM_ORDER.map(function (d) {
+      var meta = DIMS[d];
+      var pctA = r[d];
+      var topIsA = pctA >= 50;
+      var aCls = topIsA ? 'on' : 'off', bCls = topIsA ? 'off' : 'on';
+      return '<div class="dim-row">' +
+        '<div class="dim-letter ' + bCls + '">' + meta.b + '</div>' +
+        '<div class="dim-track"><div class="dim-seg-a" style="width:' + pctA + '%"></div><div class="dim-seg-b"></div></div>' +
+        '<div class="dim-pct">' + (100 - pctA) + '%</div>' +
+        '<div class="dim-letter ' + aCls + '">' + meta.a + '</div>' +
+        '<div class="dim-pct">' + pctA + '%</div>' +
+      '</div>';
+    }).join('');
+    // 四个字母卡片（按 E/I、S/N、T/F、J/P 中命中者展示）
+    var lettersHtml = '';
+    for (var i = 0; i < r.type.length; i++) {
+      var L = r.type[i], info = LETTER_INFO[L];
+      lettersHtml += '<div class="letter-card">' +
+        '<div class="head"><span class="big">' + L + '</span><span class="zh">' + info.zh + '</span><span class="en">' + info.en + '</span></div>' +
+        '<div class="body"><div class="desc">' + esc(info.desc) + '</div></div>' +
+      '</div>';
+    }
+    app.innerHTML =
+      '<div class="card result">' +
+        '<div class="label">YOUR TYPE</div>' +
+        '<div class="type">' + r.type + '</div>' +
+        '<div class="hint">你的四字母人格类型</div>' +
+        '<div class="letters">' + lettersHtml + '</div>' +
+        '<div class="dims">' + rows + '</div>' +
+        '<div class="notice"><strong>本测评仅供娱乐和自我了解，不构成心理诊断或专业建议。</strong>若需专业心理评估，请咨询相关专业人士。</div>' +
+        '<button class="btn" id="btn-retest">重新测试</button>' +
+        '<button class="link-btn" id="btn-to-history">查看历史记录</button>' +
+      '</div>';
+    document.getElementById('btn-retest').onclick = startQuiz;
+    document.getElementById('btn-to-history').onclick = function () { state = 'history'; confirmClear = false; render(); };
+    window.scrollTo(0, 0);
+  }
+
+  function fmtTime(ts) {
+    var dt = new Date(ts);
+    function p(n) { return n < 10 ? '0' + n : '' + n; }
+    return dt.getFullYear() + '-' + p(dt.getMonth() + 1) + '-' + p(dt.getDate()) + ' ' + p(dt.getHours()) + ':' + p(dt.getMinutes());
+  }
+
+  function renderHistory() {
+    var arr = loadHistory();
+    var listHtml;
+    if (arr.length === 0) {
+      listHtml = '<div class="empty"><div class="icon">🗒️</div>还没有测试记录<br>完成一次测试后，结果会保存在这里</div>';
+    } else {
+      listHtml = '<div class="history-list">' + arr.map(function (it) {
+        return '<div class="h-item">' +
+          '<div class="row1"><span class="h-type">' + esc(it.type) + '</span><span class="h-time">' + fmtTime(it.ts) + '</span></div>' +
+          '<div class="h-dims">E ' + it.EI + '% / I ' + (100 - it.EI) + '% · S ' + it.SN + '% / N ' + (100 - it.SN) + '% · T ' + it.TF + '% / F ' + (100 - it.TF) + '% · J ' + it.JP + '% / P ' + (100 - it.JP) + '%</div>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+    app.innerHTML =
+      '<div class="card history">' +
+        '<h2>历史记录</h2>' +
+        '<div class="count">最近 ' + arr.length + ' 条（上限 ' + HISTORY_LIMIT + ' 条，仅保存在本机浏览器）</div>' +
+        listHtml +
+        (arr.length > 0
+          ? (confirmClear
+              ? '<button class="btn" id="btn-clear-yes" style="background:#E74C3C">确认清空全部记录？</button><button class="link-btn" id="btn-clear-no">取消</button>'
+              : '<button class="link-btn danger" id="btn-clear">清空历史记录</button>')
+          : '') +
+        '<button class="link-btn" id="btn-back">返回</button>' +
+      '</div>';
+    var el;
+    el = document.getElementById('btn-clear');
+    if (el) el.onclick = function () { confirmClear = true; render(); };
+    el = document.getElementById('btn-clear-yes');
+    if (el) el.onclick = function () { saveHistory([]); confirmClear = false; render(); };
+    el = document.getElementById('btn-clear-no');
+    if (el) el.onclick = function () { confirmClear = false; render(); };
+    document.getElementById('btn-back').onclick = function () {
+      state = lastResult ? 'result' : 'cover';
+      render();
+    };
+    window.scrollTo(0, 0);
+  }
+
+  render();
+})();
 </script>
 </body>
 </html>
